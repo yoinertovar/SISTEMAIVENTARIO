@@ -1,0 +1,147 @@
+/**
+ * Estilos Específicos del Componente App
+ * 
+ * @description
+ * Estilos adicionales para el componente principal de la aplicación.
+ * Complementa los estilos globales de index.css.
+ * 
+ * @version 1.0.0
+ */
+
+/* =============================================
+   CONTENEDOR PRINCIPAL DE LA APLICACIÓN
+   ============================================= */
+
+.app-container {
+  font-family: 'Roboto', system-ui, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #2C3E50;
+  min-height: 100vh;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* =============================================
+   RESET Y ESTILOS GLOBALES COMPLEMENTARIOS
+   ============================================= */
+
+/**
+ * Reset consistente para todos los elementos
+ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/**
+ * Estilos para encabezados específicos de la aplicación
+ */
+h1, h2, h3 {
+  color: #1A252F;
+  margin-bottom: 0.5em;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+/* =============================================
+   COMPONENTES DE UI ESPECÍFICOS
+   ============================================= */
+
+/**
+ * Botones con temática de la aplicación
+ */
+button {
+  background-color: #2ECC71;    /* Verde vibrante */
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+  background-color: #27AE60;    /* Verde más oscuro al hover */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button:disabled {
+  background-color: #95a5a6;    /* Gris para estado deshabilitado */
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* =============================================
+   UTILIDADES RESPONSIVE
+   ============================================= */
+
+@media (max-width: 768px) {
+  .app-container {
+    padding: 0;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.75rem;
+  }
+  
+  button {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+/* =============================================
+   ESTADOS DE CARGA Y ANIMACIONES
+   ============================================= */
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

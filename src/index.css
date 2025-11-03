@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* 🎨 Paleta oscura profesional */
+  color-scheme: dark;
+  color: #e5e7eb;               /* texto principal gris claro */
+  background-color: #0f172a;    /* fondo general: azul gris oscuro elegante */
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Enlaces con azul elegante */
+a {
+  font-weight: 500;
+  color: #60a5fa; /* azul medio suave */
+  text-decoration: inherit;
+}
+a:hover {
+  color: #93c5fd; /* azul más claro */
+}
+
+/* Fondo y texto general */
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  display: block;
+  background-color: #1e293b; /* gris azulado medio */
+  color: #e5e7eb; /* gris claro */
+}
+
+/* Títulos con contraste equilibrado */
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+  color: #ffffff; /* gris muy claro */
+}
+
+/* Botones azul profesional */
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+ 
+  cursor: pointer;
+  transition: background-color 0.25s, border-color 0.25s;
+}
+button:hover {
+  background-color: #000000; /* azul más oscuro al pasar el cursor */
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* 🎨 En caso de preferir modo claro */
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #1f2937;
+    background-color: #f9fafb;
+  }
+  body {
+    background-color: #f3f4f6;
+    color: #1f2937;
+  }
+  a:hover {
+    color: #2563eb;
+  }
+  button {
+    background-color: #3b82f6;
+    color: white;
+  }
+}
