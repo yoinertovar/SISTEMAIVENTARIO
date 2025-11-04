@@ -10,11 +10,7 @@
  * @param {Object} props - Propiedades del componente
  * @param {React.ReactNode} props.children - Contenido que se renderizará en el área principal
  * 
- * @example
- * // Uso en las rutas del trabajador
- * <WorkerMainLayout>
- *   <WorkerDashboardPage />
- * </WorkerMainLayout>
+ * CAMBIO RESPONSIVE: Solo se agregó WebkitOverflowScrolling para mejorar scroll en iOS
  */
 
 import React, { useState } from 'react';
@@ -41,7 +37,7 @@ const WorkerMainLayout = ({ children }) => {
       />
 
       {/* Contenedor principal con header y contenido */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Header superior fijo que permanece visible al hacer scroll */}
         <header
           className="sticky top-0 z-50 shadow"
@@ -56,7 +52,10 @@ const WorkerMainLayout = ({ children }) => {
         {/* Área de contenido principal con scroll independiente */}
         <main
           className="flex-1 overflow-y-auto p-4 lg:p-6"
-          style={{ backgroundColor: "var(--color-surface)" }}
+          style={{ 
+            backgroundColor: "var(--color-surface)",
+            WebkitOverflowScrolling: 'touch' /* AGREGADO: Mejora scroll en iOS */
+          }}
         >
           {children}
         </main>

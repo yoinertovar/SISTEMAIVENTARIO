@@ -8,6 +8,11 @@ import LogoSoftWork from '../../assets/images/LogoSoftWork.png';
  * Página de inicio de sesión mejorada con diseño profesional
  * Implementa glassmorphism, animaciones suaves y mejor jerarquía visual
  * 
+ * CAMBIOS RESPONSIVE:
+ * - Logo visible en móvil (CORREGIDO)
+ * - Tonos rosados reemplazados por azul-indigo
+ * - Diseño completamente adaptativo
+ * 
  * @componente
  * @returns {React.Element} Página completa de inicio de sesión profesional
  */
@@ -106,12 +111,12 @@ const LoginPage = () => {
       }}
       className="flex items-center justify-center bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 p-4 relative"
     >
-      {/* Efectos de fondo decorativos mejorados */}
+      {/* Efectos de fondo decorativos mejorados - SIN TONOS ROSADOS */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Orbes de luz con blur */}
+        {/* Orbes de luz con blur - SOLO AZUL-CYAN */}
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 right-0 w-96 h-96 bg-violet-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 right-0 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         
         {/* Grid de fondo sutil */}
         <div 
@@ -129,8 +134,8 @@ const LoginPage = () => {
       {/* Contenedor Principal con glassmorphism */}
       <div className="w-full max-w-7xl grid lg:grid-cols-2 gap-0 rounded-3xl overflow-hidden shadow-2xl relative z-10 backdrop-blur-sm border border-white/10">
         
-        {/* Sección Izquierda - Branding Mejorado */}
-        <div className="bg-gradient-to-br from-slate-900/95 via-blue-900/95 to-slate-900/95 backdrop-blur-xl p-8 lg:p-16 flex flex-col justify-center items-center text-white relative overflow-hidden border-r border-white/10">
+        {/* Sección Izquierda - Branding Mejorado (OCULTO EN MÓVIL) */}
+        <div className="hidden lg:flex bg-gradient-to-br from-slate-900/95 via-blue-900/95 to-slate-900/95 backdrop-blur-xl p-8 lg:p-16 flex-col justify-center items-center text-white relative overflow-hidden border-r border-white/10">
           
           {/* Efectos de luz mejorados */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
@@ -139,7 +144,7 @@ const LoginPage = () => {
           {/* Partículas decorativas */}
           <div className="absolute top-10 right-10 w-2 h-2 bg-cyan-400 rounded-full animate-ping"></div>
           <div className="absolute bottom-20 left-10 w-2 h-2 bg-blue-400 rounded-full animate-ping" style={{ animationDelay: '0.5s' }}></div>
-          <div className="absolute top-1/3 left-20 w-2 h-2 bg-violet-400 rounded-full animate-ping" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute top-1/3 left-20 w-2 h-2 bg-indigo-400 rounded-full animate-ping" style={{ animationDelay: '1s' }}></div>
 
           <div className="relative z-10 space-y-10 w-full max-w-lg">
             
@@ -153,7 +158,7 @@ const LoginPage = () => {
                 <div className="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-2xl transform transition-all duration-500 group-hover:scale-105 group-hover:border-cyan-400/50">
                   <img
                     src={LogoSoftWork}
-                    alt="Logo SoftWok"
+                    alt="Logo SoftWork"
                     className="h-32 md:h-40 lg:h-48 w-auto drop-shadow-2xl"
                   />
                 </div>
@@ -167,15 +172,11 @@ const LoginPage = () => {
               <div className="h-px w-20 bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-50"></div>
             </div>
 
-            {/* Título y Descripción mejorados */}
+            {/* Título y Descripción mejorados - SIN TONOS ROSADOS */}
             <div className="text-center space-y-4">
               <h1 className="text-4xl lg:text-5xl font-bold mb-4 leading-tight">
-                <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-violet-400 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
                   SIS. DE INVENTARIO Y VENTAS
-                </span>
-                <br />
-                <span className="text-white">
-                   
                 </span>
               </h1>
               
@@ -184,7 +185,6 @@ const LoginPage = () => {
               </p>
             </div>
 
-          
             {/* Badge de seguridad */}
             <div className="flex items-center justify-center gap-3 mt-12 text-slate-400">
               <Shield className="text-green-400" size={20} />
@@ -194,28 +194,65 @@ const LoginPage = () => {
         </div>
 
         {/* Sección Derecha - Formulario Mejorado */}
-        <div className="bg-slate-900/95 backdrop-blur-xl p-8 lg:p-16 flex flex-col justify-center relative">
+        <div className="bg-slate-900/95 backdrop-blur-xl p-6 sm:p-8 lg:p-16 flex flex-col justify-center relative">
           
           {/* Resplandor de fondo */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"></div>
           
           <div className="w-full max-w-md mx-auto relative z-10">
             
+            {/* LOGO MÓVIL - OPTIMIZADO PARA PANTALLAS PEQUEÑAS (visible solo en móvil) */}
+            <div className="lg:hidden text-center mb-4">
+              <div className="inline-block relative group max-w-[200px] mx-auto">
+                {/* Resplandor detrás del logo - más sutil */}
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl blur-lg opacity-30"></div>
+                
+                {/* Contenedor del logo con glassmorphism - más compacto */}
+                <div className="relative bg-white/5 backdrop-blur-xl rounded-xl p-3 border border-white/20 shadow-xl">
+                  {/* Logo con restricciones de tamaño */}
+                  <img
+                    src={LogoSoftWork}
+                    alt="Logo SoftWork"
+                    className="w-full h-auto drop-shadow-xl mx-auto"
+                    style={{ 
+                      maxWidth: '180px',
+                      maxHeight: '80px',
+                      objectFit: 'contain'
+                    }}
+                    onError={(e) => {
+                      console.error('Error al cargar el logo:', e);
+                    }}
+                  />
+                </div>
+              </div>
+              
+              {/* Título móvil - más compacto */}
+              <h1 className="text-lg sm:text-xl font-bold mt-3 mb-1 leading-tight px-2">
+                <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
+                  SIS. DE INVENTARIO Y VENTAS
+                </span>
+              </h1>
+              
+              <p className="text-slate-400 text-xs">
+                Sistema empresarial integral
+              </p>
+            </div>
+
             {/* Encabezado del Formulario */}
-            <div className="mb-10 text-center">
-              <h2 className="text-4xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent mb-3">
+            <div className="mb-4 sm:mb-6 text-center">
+              <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent mb-1 sm:mb-2">
                 Bienvenido de nuevo
               </h2>
-              <p className="text-slate-400 text-base">
+              <p className="text-slate-400 text-xs">
                 Ingresa tus credenciales para continuar
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
               
               {/* Campo de Email mejorado */}
               <div className="group">
-                <label className="block text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+                <label className="block text-sm font-semibold text-slate-300 mb-2 flex items-center gap-2">
                   <Mail size={16} className="text-cyan-400" />
                   Correo Electrónico
                 </label>
@@ -225,7 +262,7 @@ const LoginPage = () => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="relative w-full px-5 py-4 bg-slate-800/50 backdrop-blur-xl border-2 border-slate-700/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:bg-slate-800/80 transition-all duration-300 shadow-lg"
+                    className="relative w-full px-4 py-3 bg-slate-800/50 backdrop-blur-xl border-2 border-slate-700/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:bg-slate-800/80 transition-all duration-300 shadow-lg text-sm"
                     placeholder="tu@correo.com"
                     disabled={loading}
                   />
@@ -234,7 +271,7 @@ const LoginPage = () => {
 
               {/* Campo de Contraseña mejorado */}
               <div className="group">
-                <label className="block text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+                <label className="block text-sm font-semibold text-slate-300 mb-2 flex items-center gap-2">
                   <Lock size={16} className="text-cyan-400" />
                   Contraseña
                 </label>
@@ -244,7 +281,7 @@ const LoginPage = () => {
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="relative w-full px-5 py-4 bg-slate-800/50 backdrop-blur-xl border-2 border-slate-700/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:bg-slate-800/80 transition-all duration-300 shadow-lg pr-12"
+                    className="relative w-full px-4 py-3 bg-slate-800/50 backdrop-blur-xl border-2 border-slate-700/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:bg-slate-800/80 transition-all duration-300 shadow-lg pr-12 text-sm"
                     placeholder="••••••••"
                     disabled={loading}
                   />
@@ -254,19 +291,19 @@ const LoginPage = () => {
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-cyan-400 transition-colors duration-300 p-1"
                     >
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   )}
                 </div>
               </div>
 
-              {/* Mensaje de Error mejorado */}
+              {/* Mensaje de Error mejorado - SIN TONO ROSADO */}
               {error && (
                 <div className="relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-pink-500/20 blur-xl"></div>
-                  <div className="relative flex items-start gap-3 p-4 bg-red-950/50 backdrop-blur-xl border-2 border-red-500/50 rounded-xl">
-                    <AlertCircle size={20} className="text-red-400 flex-shrink-0 mt-0.5" />
-                    <p className="text-sm text-red-300 leading-relaxed">{error}</p>
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-orange-500/20 blur-xl"></div>
+                  <div className="relative flex items-start gap-3 p-3 bg-red-950/50 backdrop-blur-xl border-2 border-red-500/50 rounded-xl">
+                    <AlertCircle size={18} className="text-red-400 flex-shrink-0 mt-0.5" />
+                    <p className="text-xs sm:text-sm text-red-300 leading-relaxed">{error}</p>
                   </div>
                 </div>
               )}
@@ -275,24 +312,24 @@ const LoginPage = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="relative w-full group mt-8"
+                className="relative w-full group mt-4 sm:mt-5"
               >
                 {/* Resplandor animado */}
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl blur-lg opacity-50 group-hover:opacity-100 transition-all duration-500 animate-pulse"></div>
                 
                 {/* Botón principal */}
-                <div className="relative bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold py-4 px-6 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 shadow-2xl transform group-hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+                <div className="relative bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 shadow-2xl transform group-hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm">
                   {loading ? (
                     <>
                       <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                      <span className="text-lg">Iniciando sesión...</span>
+                      <span>Iniciando sesión...</span>
                     </>
                   ) : (
                     <>
-                      <LogIn size={22} />
-                      <span className="text-lg">Iniciar Sesión</span>
+                      <LogIn size={18} />
+                      <span>Iniciar Sesión</span>
                       <svg 
-                        className="w-5 h-5 ml-1 transform group-hover:translate-x-1 transition-transform duration-300" 
+                        className="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform duration-300" 
                         fill="none" 
                         stroke="currentColor" 
                         viewBox="0 0 24 24"
@@ -304,30 +341,30 @@ const LoginPage = () => {
                 </div>
               </button>
 
-              {/* Acceso Rápido mejorado */}
-              <div className="mt-10">
-                <div className="relative my-8">
+              {/* Acceso Rápido mejorado - SIN TONO ROSADO */}
+              <div className="mt-4 sm:mt-6">
+                <div className="relative my-3 sm:my-4">
                   <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-slate-700"></div>
                   </div>
                   <div className="relative flex justify-center">
-                    <span className="px-4 bg-slate-900 text-slate-400 text-sm font-medium">
+                    <span className="px-3 bg-slate-900 text-slate-400 text-xs font-medium">
                       Acceso rápido (Desarrollo)
                     </span>
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Botón Admin */}
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Botón Admin - CAMBIADO A AZUL-INDIGO */}
                   <button
                     type="button"
                     onClick={() => handleQuickLogin('admin')}
                     disabled={loading}
-                    className="group relative overflow-hidden bg-gradient-to-br from-purple-900/40 to-purple-800/40 backdrop-blur-xl hover:from-purple-800/60 hover:to-purple-700/60 border-2 border-purple-500/40 hover:border-purple-400/60 text-purple-200 font-semibold py-4 px-5 rounded-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-purple-500/50"
+                    className="group relative overflow-hidden bg-gradient-to-br from-indigo-900/40 to-blue-800/40 backdrop-blur-xl hover:from-indigo-800/60 hover:to-blue-700/60 border-2 border-indigo-500/40 hover:border-indigo-400/60 text-indigo-200 font-semibold py-2 sm:py-3 px-3 sm:px-4 rounded-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-indigo-500/50 text-xs"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-400/20 to-purple-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-                    <div className="relative flex items-center justify-center gap-2">
-                      <span className="text-2xl">👨‍💼</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/0 via-indigo-400/20 to-indigo-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                    <div className="relative flex items-center justify-center gap-1 sm:gap-2">
+                      <span className="text-base sm:text-lg">👨‍💼</span>
                       <span>Admin</span>
                     </div>
                   </button>
@@ -337,11 +374,11 @@ const LoginPage = () => {
                     type="button"
                     onClick={() => handleQuickLogin('worker')}
                     disabled={loading}
-                    className="group relative overflow-hidden bg-gradient-to-br from-teal-900/40 to-teal-800/40 backdrop-blur-xl hover:from-teal-800/60 hover:to-teal-700/60 border-2 border-teal-500/40 hover:border-teal-400/60 text-teal-200 font-semibold py-4 px-5 rounded-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-teal-500/50"
+                    className="group relative overflow-hidden bg-gradient-to-br from-teal-900/40 to-teal-800/40 backdrop-blur-xl hover:from-teal-800/60 hover:to-teal-700/60 border-2 border-teal-500/40 hover:border-teal-400/60 text-teal-200 font-semibold py-2 sm:py-3 px-3 sm:px-4 rounded-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-teal-500/50 text-xs"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-teal-500/0 via-teal-400/20 to-teal-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-                    <div className="relative flex items-center justify-center gap-2">
-                      <span className="text-2xl">👷</span>
+                    <div className="relative flex items-center justify-center gap-1 sm:gap-2">
+                      <span className="text-base sm:text-lg">👷</span>
                       <span>Trabajador</span>
                     </div>
                   </button>
@@ -349,13 +386,13 @@ const LoginPage = () => {
               </div>
 
               {/* Link de recuperación */}
-              <div className="text-center mt-6">
+              <div className="text-center mt-4">
                 <a 
                   href="#" 
-                  className="text-sm text-slate-400 hover:text-cyan-400 transition-colors duration-300 inline-flex items-center gap-2 group"
+                  className="text-xs text-slate-400 hover:text-cyan-400 transition-colors duration-300 inline-flex items-center gap-2 group"
                 >
                   <span>¿Olvidaste tu contraseña?</span>
-                  <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3 h-3 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </a>
@@ -363,10 +400,10 @@ const LoginPage = () => {
             </form>
 
             {/* Pie de Página mejorado */}
-            <div className="mt-12 pt-8 border-t border-slate-800">
-              <p className="text-slate-500 text-sm text-center flex items-center justify-center gap-2">
-                <span>© 2025 SoftWok.</span>
-                <span className="text-slate-600">•</span>
+            <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-slate-800">
+              <p className="text-slate-500 text-xs text-center flex flex-col sm:flex-row items-center justify-center gap-1">
+                <span>© 2025 SoftWork.</span>
+                <span className="hidden sm:inline text-slate-600">•</span>
                 <span>Todos los derechos reservados</span>
               </p>
             </div>

@@ -8,9 +8,7 @@
  * 
  * @component
  * 
- * @example
- * // Uso en las rutas del trabajador
- * <Route path="/worker/dashboard" element={<WorkerDashboard />} />
+ * CAMBIO RESPONSIVE: Solo se agregó padding responsive para móvil
  */
 
 import React from "react";
@@ -19,7 +17,7 @@ import CashRegisterSummary from "./CashRegisterSummary";
 
 function WorkerDashboard() {
   return (
-    <div className="worker-dashboard-container">
+    <div className="worker-dashboard-container px-4 sm:px-0">
       {/* Título del dashboard */}
       <h2>Dashboard del Trabajador</h2>
       
