@@ -13,6 +13,8 @@ import { useNavigate } from 'react-router-dom';
  * 
  * @component
  * @returns {JSX.Element} Componente del panel de administración
+ * 
+ * CAMBIOS RESPONSIVE: Solo se agregó padding responsive (px-4 sm:px-0) para móvil
  */
 const AdminDashboardPage = () => {
   /**
@@ -21,7 +23,7 @@ const AdminDashboardPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 animate-fade-in px-4 sm:px-0">
       {/* ===== SECCIÓN DE MÓDULOS PRINCIPALES ===== */}
       <section>
         {/* Encabezado de la sección */}

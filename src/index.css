@@ -36,6 +36,10 @@ body {
   display: block;
   background-color: #1e293b; /* gris azulado medio */
   color: #e5e7eb; /* gris claro */
+  /* AGREGADO: Previene scroll horizontal */
+  overflow-x: hidden;
+  /* AGREGADO: Mejora scroll en iOS */
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Títulos con contraste equilibrado */
@@ -56,6 +60,9 @@ button {
  
   cursor: pointer;
   transition: background-color 0.25s, border-color 0.25s;
+  /* AGREGADO: Mejora respuesta táctil */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 button:hover {
   background-color: #000000; /* azul más oscuro al pasar el cursor */
@@ -82,4 +89,23 @@ button:focus-visible {
     background-color: #3b82f6;
     color: white;
   }
+}
+
+/* AGREGADO: Optimizaciones móvil */
+@media (max-width: 768px) {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  
+  input, select, textarea {
+    font-size: 16px; /* Previene zoom en iOS */
+  }
+}
+
+/* AGREGADO: Fix para 100vh en iOS */
+html {
+  height: -webkit-fill-available;
+}
+body {
+  min-height: -webkit-fill-available;
 }

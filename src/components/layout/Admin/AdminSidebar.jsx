@@ -15,14 +15,10 @@
  * @param {boolean} props.isMobileOpen - Estado de apertura del sidebar en móvil
  * @param {Function} props.setIsMobileOpen - Función para controlar el estado del sidebar
  * 
- * @example
- * <AdminSidebar 
- *   isMobileOpen={true} 
- *   setIsMobileOpen={setMobileOpen} 
- * />
+ * CAMBIO RESPONSIVE: Solo se agregó useEffect para prevenir scroll del body en móvil
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, Package, CreditCard, ShoppingCart, FileText, DollarSign, Clock, Users, Truck, X } from 'lucide-react';
 
@@ -45,6 +41,20 @@ const AdminSidebar = ({ isMobileOpen, setIsMobileOpen }) => {
     { id: 'usuarios', label: 'USUARIOS', icon: Users, path: '/admin/usuarios' },
     { id: 'proveedores', label: 'PROVEEDORES', icon: Truck, path: '/admin/proveedores' },
   ];
+
+  /**
+   * AGREGADO: Previene el scroll del body cuando el sidebar está abierto en móvil
+   */
+  useEffect(() => {
+    if (isMobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileOpen]);
 
   /**
    * Maneja el click en un item del menú

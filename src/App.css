@@ -5,7 +5,7 @@
  * Estilos adicionales para el componente principal de la aplicación.
  * Complementa los estilos globales de index.css.
  * 
- * @version 1.0.0
+ * @version 1.0.0 + Responsive
  */
 
 /* =============================================
@@ -19,6 +19,7 @@
   min-height: 100vh;
   padding: 0;
   box-sizing: border-box;
+  overflow-x: hidden; /* Previene scroll horizontal en móvil */
 }
 
 /* =============================================
@@ -75,6 +76,7 @@ button {
   font-size: 1rem;
   transition: all 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  touch-action: manipulation; /* AGREGADO: Mejora respuesta táctil */
 }
 
 button:hover {
@@ -118,6 +120,21 @@ button:disabled {
   }
 }
 
+/* AGREGADO: Mejoras adicionales para móvil */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.75rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  h3 {
+    font-size: 1.25rem;
+  }
+}
+
 /* =============================================
    ESTADOS DE CARGA Y ANIMACIONES
    ============================================= */
@@ -144,4 +161,15 @@ button:disabled {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* AGREGADO: Prevención de scroll horizontal y mejoras touch */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+input, select, textarea {
+  font-size: 16px; /* Previene zoom en iOS */
 }
