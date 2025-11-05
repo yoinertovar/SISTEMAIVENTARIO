@@ -1,5 +1,5 @@
 import React from "react";
-import { X, AlertCircle, Receipt } from "lucide-react";
+import { X, AlertCircle, Receipt, DollarSign } from "lucide-react";
 
 /**
  * Modal para crear o editar productos
@@ -23,11 +23,27 @@ const ProductModal = ({
   setShowCategoryModal,
 }) => {
   /**
-   * Maneja el envío del formulario
+   * Maneja el envío del formulario con validaciones de precio
    * @param {Object} e - Evento del formulario
    */
   const onSubmit = (e) => {
     e.preventDefault();
+    
+    // Validar que los precios sean mayores al costo
+    const costo = parseFloat(formData.precioCosto) || 0;
+    const precioUnd = parseFloat(formData.precioUnd) || 0;
+    const precioMayor = parseFloat(formData.precioMayor) || 0;
+    
+    if (precioUnd < costo) {
+      alert("⚠️ El precio unitario no puede ser menor al precio de costo");
+      return;
+    }
+    
+    if (precioMayor < costo) {
+      alert("⚠️ El precio al por mayor no puede ser menor al precio de costo");
+      return;
+    }
+    
     handleSubmit();
   };
 
@@ -50,6 +66,25 @@ const ProductModal = ({
     if (!valor || valor === "") return "0";
     return new Intl.NumberFormat('es-CO').format(valor);
   };
+
+  /**
+   * Calcula el margen de ganancia en porcentaje
+   * @param {number} precioVenta - Precio de venta
+   * @param {number} precioCosto - Precio de costo
+   * @returns {string} Porcentaje de margen
+   */
+  const calcularMargen = (precioVenta, precioCosto) => {
+    if (!precioVenta || !precioCosto || precioCosto === 0) return "0";
+    const margen = ((precioVenta - precioCosto) / precioCosto) * 100;
+    return margen.toFixed(1);
+  };
+
+  // Validaciones de precios
+  const costo = parseFloat(formData.precioCosto) || 0;
+  const precioUnd = parseFloat(formData.precioUnd) || 0;
+  const precioMayor = parseFloat(formData.precioMayor) || 0;
+  const precioUndMenorACosto = precioUnd > 0 && precioUnd < costo;
+  const precioMayorMenorACosto = precioMayor > 0 && precioMayor < costo;
 
   return (
     <div 
@@ -175,7 +210,39 @@ const ProductModal = ({
             )}
           </div>
 
-          {/* Precios */}
+          {/* PRECIO DE COSTO */}
+          <div className="bg-orange-500/10 border-2 border-orange-500/40 rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="bg-orange-500/20 p-2 rounded-lg">
+                <DollarSign className="text-orange-400" size={20} />
+              </div>
+              <label className="text-sm font-bold text-orange-300">
+                Precio de Costo {formData.llevaIva ? "(Sin IVA)" : ""} <span className="text-red-400">*</span>
+              </label>
+            </div>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-orange-400 font-bold">
+                $
+              </span>
+              <input
+                type="number"
+                name="precioCosto"
+                placeholder="0"
+                value={formData.precioCosto}
+                onChange={handleInputChange}
+                min="0"
+                step="1"
+                className="w-full pl-8 pr-4 py-3 bg-slate-700/50 border border-orange-500/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                required
+                aria-label="Precio de costo"
+              />
+            </div>
+            <p className="text-xs text-orange-300 mt-2">
+              💡 Este es el precio al que tú compras el producto
+            </p>
+          </div>
+
+          {/* Precios de Venta */}
           <div className="space-y-3">
             {/* Precio Unitario */}
             <div>
@@ -194,17 +261,43 @@ const ProductModal = ({
                   onChange={handleInputChange}
                   min="0"
                   step="1"
-                  className="w-full pl-8 pr-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                  className={`w-full pl-8 pr-4 py-3 bg-slate-700/50 border rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 transition-all ${
+                    precioUndMenorACosto 
+                      ? 'border-red-500 focus:ring-red-500' 
+                      : 'border-slate-600 focus:ring-emerald-500'
+                  }`}
                   required
                   aria-label="Precio unitario"
                 />
               </div>
-              {formData.llevaIva && formData.precioUnd && (
-                <div className="mt-2 bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-2">
-                  <p className="text-xs text-slate-400">Precio con IVA (19%):</p>
-                  <p className="text-lg font-bold text-emerald-400">
-                    ${formatearPesos(calcularPrecioConIva(formData.precioUnd))} COP
+              
+              {/* Alerta de precio menor al costo */}
+              {precioUndMenorACosto && (
+                <div className="mt-2 bg-red-500/10 border border-red-500/30 rounded-lg p-2 flex items-start gap-2">
+                  <AlertCircle size={16} className="text-red-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-xs text-red-300">
+                    ❌ ¡El precio unitario no puede ser menor al precio de costo! Estarías vendiendo con pérdida.
                   </p>
+                </div>
+              )}
+
+              {/* Margen de ganancia */}
+              {formData.precioUnd && formData.precioCosto && !precioUndMenorACosto && (
+                <div className="mt-2 bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-2">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-xs text-slate-400">Precio con IVA:</p>
+                      <p className="text-lg font-bold text-emerald-400">
+                        ${formatearPesos(formData.llevaIva ? calcularPrecioConIva(formData.precioUnd) : formData.precioUnd)} COP
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-slate-400">Margen:</p>
+                      <p className="text-lg font-bold text-emerald-400">
+                        +{calcularMargen(precioUnd, costo)}%
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -226,17 +319,43 @@ const ProductModal = ({
                   onChange={handleInputChange}
                   min="0"
                   step="1"
-                  className="w-full pl-8 pr-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                  className={`w-full pl-8 pr-4 py-3 bg-slate-700/50 border rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 transition-all ${
+                    precioMayorMenorACosto 
+                      ? 'border-red-500 focus:ring-red-500' 
+                      : 'border-slate-600 focus:ring-cyan-500'
+                  }`}
                   required
                   aria-label="Precio por mayor"
                 />
               </div>
-              {formData.llevaIva && formData.precioMayor && (
-                <div className="mt-2 bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-2">
-                  <p className="text-xs text-slate-400">Precio con IVA (19%):</p>
-                  <p className="text-lg font-bold text-cyan-400">
-                    ${formatearPesos(calcularPrecioConIva(formData.precioMayor))} COP
+              
+              {/* Alerta de precio menor al costo */}
+              {precioMayorMenorACosto && (
+                <div className="mt-2 bg-red-500/10 border border-red-500/30 rounded-lg p-2 flex items-start gap-2">
+                  <AlertCircle size={16} className="text-red-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-xs text-red-300">
+                    ❌ ¡El precio al por mayor no puede ser menor al precio de costo! Estarías vendiendo con pérdida.
                   </p>
+                </div>
+              )}
+
+              {/* Margen de ganancia */}
+              {formData.precioMayor && formData.precioCosto && !precioMayorMenorACosto && (
+                <div className="mt-2 bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-2">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-xs text-slate-400">Precio con IVA:</p>
+                      <p className="text-lg font-bold text-cyan-400">
+                        ${formatearPesos(formData.llevaIva ? calcularPrecioConIva(formData.precioMayor) : formData.precioMayor)} COP
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-slate-400">Margen:</p>
+                      <p className="text-lg font-bold text-cyan-400">
+                        +{calcularMargen(precioMayor, costo)}%
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -320,7 +439,8 @@ const ProductModal = ({
           <div className="flex gap-3 pt-4">
             <button
               type="submit"
-              className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white py-3.5 rounded-xl transition-all font-bold shadow-lg shadow-emerald-500/30 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-emerald-500/30"
+              className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white py-3.5 rounded-xl transition-all font-bold shadow-lg shadow-emerald-500/30 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              disabled={precioUndMenorACosto || precioMayorMenorACosto}
             >
               {editingProduct ? "💾 Actualizar Producto" : "✅ Guardar Producto"}
             </button>

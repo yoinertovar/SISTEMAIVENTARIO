@@ -1,11 +1,11 @@
 import React from 'react';
-import { FileText, Calendar, User, DollarSign, Printer, Download, Eye } from 'lucide-react';
+import { FileText, Calendar, User, DollarSign, Printer, Download, Eye, Trash2 } from 'lucide-react';
 
 /**
  * Componente que muestra la lista de facturas en tarjetas
  * Incluye botones de acción rápida para cada factura
  */
-const InvoiceList = ({ invoices, onInvoiceSelect, getEstadoColor, onPrintInvoice, onExportPDF }) => {
+const InvoiceList = ({ invoices, onInvoiceSelect, getEstadoColor, onPrintInvoice, onExportPDF, onDeleteInvoice }) => {
   
   /**
    * Formatea valores monetarios
@@ -57,6 +57,22 @@ const InvoiceList = ({ invoices, onInvoiceSelect, getEstadoColor, onPrintInvoice
   const handleActionClick = (e, action, invoice) => {
     e.stopPropagation();
     action(invoice);
+  };
+
+  /**
+   * Maneja la eliminación de una factura con confirmación
+   */
+  const handleDeleteClick = (e, invoice) => {
+    e.stopPropagation();
+    
+    if (window.confirm(
+      `¿Estás seguro de eliminar la factura ${invoice.id}?\n\n` +
+      `Cliente: ${invoice.cliente}\n` +
+      `Total: ${formatCurrency(invoice.total)}\n\n` +
+      `Esta acción no se puede deshacer.`
+    )) {
+      onDeleteInvoice(invoice.id);
+    }
   };
 
   return (
@@ -152,6 +168,17 @@ const InvoiceList = ({ invoices, onInvoiceSelect, getEstadoColor, onPrintInvoice
                       title="Exportar PDF"
                     >
                       <Download size={16} />
+                    </button>
+                  )}
+
+                  {/* NUEVO: Botón de eliminar */}
+                  {onDeleteInvoice && (
+                    <button
+                      onClick={(e) => handleDeleteClick(e, invoice)}
+                      className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-300 shadow-lg hover:shadow-red-500/50"
+                      title="Eliminar factura"
+                    >
+                      <Trash2 size={16} />
                     </button>
                   )}
                 </div>

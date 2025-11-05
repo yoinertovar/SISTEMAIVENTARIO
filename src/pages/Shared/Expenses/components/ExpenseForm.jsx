@@ -20,6 +20,16 @@ const ExpenseForm = ({ mode, formData, onInputChange, onSave, onCancel }) => {
     ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 hover:shadow-emerald-500/50' 
     : 'bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 hover:shadow-orange-500/50';
 
+  /**
+   * Formatea números como pesos colombianos
+   * @param {number} valor - Valor a formatear
+   * @returns {string} Valor formateado
+   */
+  const formatearPesos = (valor) => {
+    if (!valor || valor === "") return "0";
+    return new Intl.NumberFormat('es-CO').format(valor);
+  };
+
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-[#1a1f2e] rounded-xl shadow-2xl max-w-md w-full border border-gray-800 animate-fade-in">
@@ -72,19 +82,29 @@ const ExpenseForm = ({ mode, formData, onInputChange, onSave, onCancel }) => {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold text-gray-300 mb-2 uppercase tracking-wide">
-                Monto
+                Monto (COP)
               </label>
-              <input
-                type="number"
-                name="monto"
-                value={formData.monto}
-                onChange={onInputChange}
-                className="w-full px-4 py-3 bg-[#0f1419] text-white border border-gray-700 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all placeholder-gray-500"
-                placeholder="0.00"
-                min="0"
-                step="0.01"
-                required
-              />
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-orange-400 font-bold">
+                  $
+                </span>
+                <input
+                  type="number"
+                  name="monto"
+                  value={formData.monto}
+                  onChange={onInputChange}
+                  className="w-full pl-8 pr-4 py-3 bg-[#0f1419] text-white border border-gray-700 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all placeholder-gray-500"
+                  placeholder="0"
+                  min="0"
+                  step="1"
+                  required
+                />
+              </div>
+              {formData.monto && (
+                <p className="text-xs text-gray-400 mt-1">
+                  ${formatearPesos(formData.monto)} COP
+                </p>
+              )}
             </div>
 
             <div>
@@ -134,6 +154,8 @@ const ExpenseForm = ({ mode, formData, onInputChange, onSave, onCancel }) => {
                 <option value="Efectivo">Efectivo</option>
                 <option value="Tarjeta">Tarjeta</option>
                 <option value="Transferencia">Transferencia</option>
+                <option value="Nequi">Nequi</option>
+                <option value="Daviplata">Daviplata</option>
               </select>
             </div>
           </div>

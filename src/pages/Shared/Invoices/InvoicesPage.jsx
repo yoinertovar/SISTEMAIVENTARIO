@@ -1,23 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import InvoiceForm from './components/InvoiceForm';
+import MultiInvoiceManager from './components/MultiInvoiceManager';
 import InvoicePreview from './components/InvoicePreview';
 import InvoiceList from './components/InvoiceList';
 import InvoiceDetail from './components/InvoiceDetail';
 import InvoiceStats from './components/InvoiceStats';
 import InvoiceEmptyState from './components/InvoiceEmptyState';
-import { FileText, Plus, Search, Download, AlertCircle } from 'lucide-react';
+import { FileText, Plus, Search, Download, AlertCircle, CheckCircle } from 'lucide-react';
 import html2pdf from 'html2pdf.js';
 
 /**
  * Página principal de gestión de facturas
- * SIN IVA - CON DESCUENTO - PESOS COLOMBIANOS
+ * CON SISTEMA DE MÚLTIPLES FACTURAS - SIN IVA - CON DESCUENTO - PESOS COLOMBIANOS
  */
 const InvoicesPage = () => {
   // ==================== FUNCIÓN AUXILIAR PARA FECHA LOCAL ====================
-  /**
-   * Obtiene la fecha actual en formato YYYY-MM-DD en la zona horaria local
-   * Evita problemas de conversión a UTC que pueden cambiar la fecha
-   */
   const getLocalDate = () => {
     const now = new Date();
     const year = now.getFullYear();
@@ -27,33 +23,10 @@ const InvoicesPage = () => {
   };
 
   // ==================== ESTADOS DE NAVEGACIÓN ====================
-  const [showNewInvoice, setShowNewInvoice] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
+  const [showMultiInvoice, setShowMultiInvoice] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
 
-  // ==================== ESTADO DE ITEMS DE FACTURA ====================
-  const [invoiceItems, setInvoiceItems] = useState([
-    { codigo: '', nombre: '', precio: '', cantidad: '', subtotal: 0 }
-  ]);
-
-  // ==================== ESTADO DE DESCUENTO ====================
-  const [discount, setDiscount] = useState(0);
-
-  // ==================== DATOS BÁSICOS DE FACTURA ====================
-  const [invoiceData, setInvoiceData] = useState({
-    cliente: '',
-    fecha: getLocalDate(),
-    vendedor: 'Admin',
-    identificacion: '',
-    paymentMethod: 'efectivo',
-    paymentType: 'efectivo'
-  });
-
-  // ==================== ESTADOS DE PAGO ====================
-  const [paymentMethod, setPaymentMethod] = useState('efectivo');
-  const [paymentType, setPaymentType] = useState('efectivo');
-
-  // ==================== ESTADO DE FACTURAS Y ERRORES ====================
+  // ==================== ESTADO DE FACTURAS Y FILTROS ====================
   const [invoices, setInvoices] = useState(() => {
     const saved = localStorage.getItem('invoices');
     return saved ? JSON.parse(saved) : [];
@@ -61,6 +34,7 @@ const InvoicesPage = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const [filterDateFrom, setFilterDateFrom] = useState('');
   const [filterDateTo, setFilterDateTo] = useState('');
 
@@ -70,138 +44,73 @@ const InvoicesPage = () => {
     console.log('💾 Facturas guardadas en localStorage:', invoices.length);
   }, [invoices]);
 
-  useEffect(() => {
-    setInvoiceData(prev => ({
-      ...prev,
-      paymentMethod: paymentMethod,
-      paymentType: paymentType
-    }));
-  }, [paymentMethod, paymentType]);
-
-  // ==================== FUNCIONES DE GESTIÓN DE ITEMS ====================
-  const addItem = () => {
-    setInvoiceItems([...invoiceItems, { 
-      codigo: '', 
-      nombre: '', 
-      precio: '', 
-      cantidad: '', 
-      subtotal: 0 
-    }]);
-  };
-
-  const removeItem = (index) => {
-    if (invoiceItems.length > 1) {
-      const newItems = invoiceItems.filter((_, i) => i !== index);
-      setInvoiceItems(newItems);
-    } else {
-      setError('Debe haber al menos un item en la factura');
-      setTimeout(() => setError(null), 3000);
-    }
-  };
-
-  const updateItem = (index, field, value) => {
-    const newItems = [...invoiceItems];
-    newItems[index][field] = value;
-    
-    if (field === 'precio' || field === 'cantidad') {
-      const precio = parseFloat(newItems[index].precio) || 0;
-      const cantidad = parseFloat(newItems[index].cantidad) || 0;
-      newItems[index].subtotal = precio * cantidad;
-    }
-    
-    setInvoiceItems(newItems);
-  };
-
-  // ==================== FUNCIONES DE CÁLCULO ====================
-  const calculateSubtotal = () => 
-    invoiceItems.reduce((sum, item) => sum + (item.subtotal || 0), 0);
-
-  const calculateDiscount = () => parseFloat(discount) || 0;
-
-  const calculateTotal = () => {
-    const subtotal = calculateSubtotal();
-    const discountAmount = calculateDiscount();
-    return Math.max(0, subtotal - discountAmount); // No puede ser negativo
-  };
-
-  // ==================== FUNCIONES DE GESTIÓN DE FACTURAS ====================
-  const handleSaveAndInvoice = () => {
-    if (!invoiceData.cliente || invoiceData.cliente.trim() === '') {
-      setError('Debe ingresar el nombre del cliente');
-      setTimeout(() => setError(null), 3000);
-      return;
-    }
-
-    const validItems = invoiceItems.filter(item => 
-      item.nombre && item.nombre.trim() !== '' && 
-      item.precio && parseFloat(item.precio) > 0 && 
-      item.cantidad && parseFloat(item.cantidad) > 0
-    );
-
-    if (validItems.length === 0) {
-      setError('Debe agregar al menos un item válido');
-      setTimeout(() => setError(null), 3000);
-      return;
-    }
-
-    setInvoiceItems(validItems);
-    setInvoiceData(prev => ({
-      ...prev,
-      paymentMethod: paymentMethod,
-      paymentType: paymentType
-    }));
-
-    setTimeout(() => {
-      setShowNewInvoice(false);
-      setShowPreview(true);
-    }, 0);
-  };
-
-  const handleSaveInvoiceToDatabase = (invoiceData) => {
+  // ==================== FUNCIÓN PARA GUARDAR FACTURA ====================
+  /**
+   * Guarda una nueva factura en la base de datos (localStorage)
+   * También se llama automáticamente al imprimir/exportar
+   */
+  const handleSaveInvoiceToDatabase = (invoiceData, options = {}) => {
     try {
       const newInvoice = {
         ...invoiceData,
         id: invoiceData.id || `F-${String(Date.now()).slice(-8)}`,
         createdAt: new Date().toISOString(),
         fecha: invoiceData.fecha ? invoiceData.fecha.split('T')[0] : getLocalDate(),
-        estado: 'Pagada',
-        discount: calculateDiscount() // Guardar el descuento
+        estado: 'Pagada'
       };
 
-      setInvoices(prev => [newInvoice, ...prev]);
-      resetForm();
+      // Verificar si la factura ya existe (al imprimir/exportar)
+      const existingIndex = invoices.findIndex(inv => inv.id === newInvoice.id);
       
+      if (existingIndex >= 0) {
+        // Actualizar factura existente
+        setInvoices(prev => prev.map((inv, idx) => 
+          idx === existingIndex ? newInvoice : inv
+        ));
+        
+        if (!options.silent) {
+          setSuccess('Factura actualizada correctamente');
+          setTimeout(() => setSuccess(null), 3000);
+        }
+      } else {
+        // Agregar nueva factura
+        setInvoices(prev => [newInvoice, ...prev]);
+        
+        if (!options.silent) {
+          setSuccess('Factura guardada correctamente');
+          setTimeout(() => setSuccess(null), 3000);
+        }
+      }
+
       console.log('✅ Factura guardada:', newInvoice);
       return newInvoice;
     } catch (err) {
       setError('Error al guardar la factura: ' + err.message);
       console.error(err);
+      setTimeout(() => setError(null), 3000);
       return null;
     }
   };
 
-  const resetForm = () => {
-    setInvoiceItems([{ codigo: '', nombre: '', precio: '', cantidad: '', subtotal: 0 }]);
-    setDiscount(0); // Resetear descuento
-    setInvoiceData({
-      cliente: '',
-      fecha: getLocalDate(),
-      vendedor: 'Admin',
-      identificacion: '',
-      paymentMethod: 'efectivo',
-      paymentType: 'efectivo'
-    });
-    setPaymentMethod('efectivo');
-    setPaymentType('efectivo');
-    setShowPreview(false);
-    setError(null);
+  // ==================== FUNCIÓN PARA ELIMINAR FACTURA ====================
+  /**
+   * Elimina una factura de la lista
+   */
+  const handleDeleteInvoice = (invoiceId) => {
+    setInvoices(prev => prev.filter(inv => inv.id !== invoiceId));
+    
+    // Si la factura eliminada estaba seleccionada, limpiar la selección
+    if (selectedInvoice && selectedInvoice.id === invoiceId) {
+      setSelectedInvoice(null);
+    }
+
+    setSuccess('Factura eliminada correctamente');
+    setTimeout(() => setSuccess(null), 3000);
+    
+    console.log('🗑️ Factura eliminada:', invoiceId);
   };
 
-  const handleCancel = () => {
-    resetForm();
-    setShowNewInvoice(false);
-  };
-
+  // ==================== FUNCIONES DE FILTRADO ====================
   const getEstadoColor = (estado) => {
     switch (estado) {
       case 'Pagada':
@@ -215,7 +124,6 @@ const InvoicesPage = () => {
     }
   };
 
-  // ==================== FUNCIONES DE FILTRADO ====================
   const getFilteredInvoices = () => {
     return invoices.filter(invoice => {
       const matchesSearch = 
@@ -245,7 +153,24 @@ const InvoicesPage = () => {
     });
   };
 
-  // ==================== FUNCIONES DE IMPRESIÓN ====================
+  // ==================== FUNCIONES DE IMPRESIÓN Y PDF ====================
+  /**
+   * Convierte una fecha en formato YYYY-MM-DD a fecha local
+   */
+  const parseLocalDate = (dateString) => {
+    if (!dateString) return null;
+    
+    if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      const [year, month, day] = dateString.split('-').map(Number);
+      return new Date(year, month - 1, day);
+    }
+    
+    return new Date(dateString);
+  };
+
+  /**
+   * Genera el contenido HTML para imprimir una factura
+   */
   const generatePrintableInvoiceHTML = (invoice) => {
     const formatCurrency = (value) => {
       return new Intl.NumberFormat('es-CO', {
@@ -257,7 +182,9 @@ const InvoicesPage = () => {
 
     const formatDate = (dateString) => {
       if (!dateString) return 'N/A';
-      const date = new Date(dateString);
+      const date = parseLocalDate(dateString);
+      if (!date || isNaN(date.getTime())) return 'N/A';
+      
       return date.toLocaleDateString('es-CO', {
         day: '2-digit',
         month: 'long',
@@ -270,7 +197,9 @@ const InvoicesPage = () => {
         'efectivo': 'Efectivo',
         'tarjeta': 'Tarjeta',
         'transferencia': 'Transferencia',
-        'credito': 'Crédito'
+        'credito': 'Crédito',
+        'nequi': 'Nequi',
+        'daviplata': 'Daviplata'
       };
       return translations[method] || method;
     };
@@ -562,7 +491,17 @@ const InvoicesPage = () => {
     `;
   };
 
+  /**
+   * Maneja la impresión rápida de una factura
+   * MEJORA: Guarda la factura automáticamente si no existe
+   */
   const handleQuickPrint = (invoice) => {
+    // Guardar automáticamente si la factura no está en la lista
+    const exists = invoices.some(inv => inv.id === invoice.id);
+    if (!exists) {
+      handleSaveInvoiceToDatabase(invoice, { silent: true });
+    }
+
     const printWindow = window.open('', '', 'width=800,height=600');
     
     if (printWindow) {
@@ -576,74 +515,57 @@ const InvoicesPage = () => {
     }
   };
 
-  const handleQuickExportPDF = async (invoice) => {
-    try {
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = generatePrintableInvoiceHTML(invoice);
-      tempDiv.style.position = 'absolute';
-      tempDiv.style.left = '-9999px';
-      document.body.appendChild(tempDiv);
+  /**
+   * Maneja la exportación rápida a PDF de una factura
+   * MEJORA: Guarda la factura automáticamente si no existe
+   */
+  const handleQuickExportPDF = (invoice) => {
+    // Guardar automáticamente si la factura no está en la lista
+    const exists = invoices.some(inv => inv.id === invoice.id);
+    if (!exists) {
+      handleSaveInvoiceToDatabase(invoice, { silent: true });
+    }
 
-      const invoiceContent = tempDiv.querySelector('.invoice-container');
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = generatePrintableInvoiceHTML(invoice);
+    tempDiv.style.position = 'absolute';
+    tempDiv.style.left = '-9999px';
+    document.body.appendChild(tempDiv);
+
+    const invoiceContent = tempDiv.querySelector('.invoice-container');
+    
+    if (invoiceContent) {
+      const opt = {
+        margin: 0.5,
+        filename: `Factura_${invoice.id}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
       
-      if (invoiceContent) {
-        const opt = {
-          margin: 0.5,
-          filename: `Factura_${invoice.id}.pdf`,
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true },
-          jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-        };
-        
-        await html2pdf()
-          .set(opt)
-          .from(invoiceContent)
-          .save();
-        
-        document.body.removeChild(tempDiv);
-      }
-    } catch (error) {
-      console.error('Error al generar PDF:', error);
-      setError('Error al generar el PDF');
-      setTimeout(() => setError(null), 3000);
+      html2pdf()
+        .set(opt)
+        .from(invoiceContent)
+        .save()
+        .then(() => {
+          document.body.removeChild(tempDiv);
+        })
+        .catch((error) => {
+          console.error('Error al generar PDF:', error);
+          document.body.removeChild(tempDiv);
+        });
     }
   };
 
   // ==================== RENDERIZADO ====================
-  if (showPreview) {
+  if (showMultiInvoice) {
     return (
-      <InvoicePreview
-        invoiceData={invoiceData}
-        invoiceItems={invoiceItems}
-        subtotal={calculateSubtotal()}
-        discount={calculateDiscount()}
-        total={calculateTotal()}
-        onClose={() => {
-          setShowPreview(false);
-          setShowNewInvoice(false);
+      <MultiInvoiceManager
+        onSaveInvoice={(invoiceData) => {
+          handleSaveInvoiceToDatabase(invoiceData);
+          setShowMultiInvoice(false);
         }}
-        onSaveInvoice={handleSaveInvoiceToDatabase}
-      />
-    );
-  }
-
-  if (showNewInvoice) {
-    return (
-      <InvoiceForm
-        invoiceItems={invoiceItems}
-        paymentMethod={paymentMethod}
-        onAddItem={addItem}
-        onRemoveItem={removeItem}
-        onUpdateItem={updateItem}
-        onPaymentMethodChange={setPaymentMethod}
-        onSaveAndInvoice={handleSaveAndInvoice}
-        onCancel={handleCancel}
-        subtotal={calculateSubtotal()}
-        discount={discount}
-        onDiscountChange={setDiscount}
-        total={calculateTotal()}
-        invoiceData={invoiceData}
-        onInvoiceDataChange={setInvoiceData}
+        onCancel={() => setShowMultiInvoice(false)}
       />
     );
   }
@@ -654,12 +576,18 @@ const InvoicesPage = () => {
         
         {/* Mensajes de Error y Éxito */}
         {error && (
-          <div className="bg-red-500/20 border border-red-500/50 text-red-400 px-6 py-4 rounded-xl flex items-center space-x-3">
+          <div className="bg-red-500/20 border border-red-500/50 text-red-400 px-6 py-4 rounded-xl flex items-center space-x-3 animate-fade-in">
             <AlertCircle size={20} />
             <span>{error}</span>
           </div>
         )}
 
+        {success && (
+          <div className="bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 px-6 py-4 rounded-xl flex items-center space-x-3 animate-fade-in">
+            <CheckCircle size={20} />
+            <span>{success}</span>
+          </div>
+        )}
 
         {/* Header */}
         <div className="bg-[#1a1f2e] p-6 rounded-xl shadow-xl border border-gray-800">
@@ -670,11 +598,11 @@ const InvoicesPage = () => {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-white">Gestión de Facturas</h1>
-                <p className="text-gray-400 text-sm">Genera, administra e imprime facturas profesionales</p>
+                <p className="text-gray-400 text-sm">Genera, administra e imprime facturas profesionales con múltiples pestañas</p>
               </div>
             </div>
             <button 
-              onClick={() => setShowNewInvoice(true)}
+              onClick={() => setShowMultiInvoice(true)}
               className="flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-6 py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-purple-500/50 font-medium"
             >
               <Plus size={20} />
@@ -733,6 +661,7 @@ const InvoicesPage = () => {
                 getEstadoColor={getEstadoColor}
                 onPrintInvoice={handleQuickPrint}
                 onExportPDF={handleQuickExportPDF}
+                onDeleteInvoice={handleDeleteInvoice}
               />
             ) : (
               <InvoiceEmptyState />
@@ -755,6 +684,17 @@ const InvoicesPage = () => {
           </p>
         </div>
       </div>
+
+      {/* Estilos para animaciones */}
+      <style>{`
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.3s ease-out;
+        }
+      `}</style>
     </div>
   );
 };

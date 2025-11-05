@@ -10,6 +10,20 @@ import { DollarSign, TrendingDown, CreditCard } from 'lucide-react';
  */
 const ExpenseStats = ({ expenses }) => {
   /**
+   * Formatea números como pesos colombianos
+   * @param {number} valor - Valor a formatear
+   * @returns {string} Valor formateado
+   */
+  const formatearPesos = (valor) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(valor);
+  };
+
+  /**
    * Calcula los totales de gastos
    * @returns {Object} Objeto con totales calculados
    */
@@ -41,7 +55,7 @@ const ExpenseStats = ({ expenses }) => {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-orange-100 text-sm font-medium mb-1">Gastos del Mes</p>
-            <p className="text-3xl font-bold text-white">${totals.thisMonth.toFixed(2)}</p>
+            <p className="text-3xl font-bold text-white">{formatearPesos(totals.thisMonth)}</p>
           </div>
           <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
             <TrendingDown className="text-white" size={28} />
@@ -54,7 +68,7 @@ const ExpenseStats = ({ expenses }) => {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-red-100 text-sm font-medium mb-1">Gastos Pendientes</p>
-            <p className="text-3xl font-bold text-white">${totals.pending.toFixed(2)}</p>
+            <p className="text-3xl font-bold text-white">{formatearPesos(totals.pending)}</p>
           </div>
           <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
             <CreditCard className="text-white" size={28} />
@@ -67,7 +81,7 @@ const ExpenseStats = ({ expenses }) => {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-gray-200 text-sm font-medium mb-1">Total Gastos</p>
-            <p className="text-3xl font-bold text-white">${totals.total.toFixed(2)}</p>
+            <p className="text-3xl font-bold text-white">{formatearPesos(totals.total)}</p>
           </div>
           <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
             <DollarSign className="text-white" size={28} />

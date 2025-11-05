@@ -10,6 +10,20 @@ import { Edit2, Trash2 } from 'lucide-react';
  * @param {Function} props.onDelete - Función para eliminar gasto
  */
 const ExpenseTable = ({ expenses, onEdit, onDelete }) => {
+  /**
+   * Formatea números como pesos colombianos
+   * @param {number} valor - Valor a formatear
+   * @returns {string} Valor formateado
+   */
+  const formatearPesos = (valor) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(valor);
+  };
+
   return (
     <div className="bg-[#1a1f2e] rounded-xl shadow-xl border border-gray-800 overflow-hidden">
       <div className="overflow-x-auto">
@@ -66,7 +80,7 @@ const ExpenseTable = ({ expenses, onEdit, onDelete }) => {
                   {expense.fechaGasto}
                 </td>
                 <td className="py-4 px-4 text-orange-400 font-bold">
-                  ${parseFloat(expense.monto).toFixed(2)}
+                  {formatearPesos(parseFloat(expense.monto))}
                 </td>
                 <td className="py-4 px-4">
                   <span className={`px-3 py-1.5 rounded-lg text-xs font-semibold border ${
