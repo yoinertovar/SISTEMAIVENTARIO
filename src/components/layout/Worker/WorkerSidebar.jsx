@@ -166,7 +166,7 @@ const WorkerSidebar = ({ isMobileOpen, setIsMobileOpen }) => {
           <div className="relative bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-center py-3.5 rounded-xl font-black text-sm shadow-lg shadow-emerald-500/30 overflow-hidden group cursor-pointer hover:scale-105 transition-transform">
             {/* Efecto de brillo animado que cruza el footer en hover */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-            <span className="relative">TUSOFTW</span>
+            <span className="relative">SOFTWOK</span>
           </div>
         </div>
       </aside>
