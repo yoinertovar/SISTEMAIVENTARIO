@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { X, Minus, Maximize2, Plus } from 'lucide-react';
 import InvoiceForm from './InvoiceForm';
+import InvoicePreview from './InvoicePreview';
 
 /**
- * Gestor de múltiples facturas con sistema de pestañas
- * Permite abrir, minimizar y cerrar múltiples facturas simultáneamente
+ * 🎨 Gestor de múltiples facturas con preview espectacular
+ * Ahora con vista previa profesional antes de guardar
  */
 const MultiInvoiceManager = ({
   onSaveInvoice,
@@ -13,6 +14,7 @@ const MultiInvoiceManager = ({
   const [tabs, setTabs] = useState([]);
   const [activeTab, setActiveTab] = useState(null);
   const [nextTabId, setNextTabId] = useState(1);
+  const [previewData, setPreviewData] = useState(null); // 👈 Estado para el preview
 
   /**
    * Obtiene la fecha actual en formato YYYY-MM-DD
@@ -65,7 +67,6 @@ const MultiInvoiceManager = ({
   const closeTab = (tabId) => {
     const tab = tabs.find(t => t.id === tabId);
     
-    // Preguntar confirmación si hay datos en la factura
     const hasData = tab.state.invoiceData.cliente || 
                     tab.state.invoiceItems.some(item => item.nombre);
     
@@ -78,7 +79,6 @@ const MultiInvoiceManager = ({
     const newTabs = tabs.filter(t => t.id !== tabId);
     setTabs(newTabs);
     
-    // Si se cierra la pestaña activa, activar otra
     if (activeTab === tabId) {
       if (newTabs.length > 0) {
         setActiveTab(newTabs[newTabs.length - 1].id);
@@ -98,7 +98,6 @@ const MultiInvoiceManager = ({
         : tab
     ));
 
-    // Si se minimiza la pestaña activa, desactivarla
     if (activeTab === tabId) {
       const tab = tabs.find(t => t.id === tabId);
       if (!tab.isMinimized) {
@@ -130,7 +129,7 @@ const MultiInvoiceManager = ({
   };
 
   /**
-   * Maneja el guardado de una factura
+   * 🎯 MODIFICADO: Ahora abre el PREVIEW en lugar de guardar directamente
    */
   const handleSaveInvoice = (tabId) => {
     const tab = tabs.find(t => t.id === tabId);
@@ -140,7 +139,7 @@ const MultiInvoiceManager = ({
     
     // Validaciones
     if (!state.invoiceData.cliente || state.invoiceData.cliente.trim() === '') {
-      alert('Debe ingresar el nombre del cliente');
+      alert('⚠️ Debe ingresar el nombre del cliente');
       return;
     }
 
@@ -151,7 +150,7 @@ const MultiInvoiceManager = ({
     );
 
     if (validItems.length === 0) {
-      alert('Debe agregar al menos un item válido');
+      alert('⚠️ Debe agregar al menos un item válido');
       return;
     }
 
@@ -160,22 +159,43 @@ const MultiInvoiceManager = ({
     const discountAmount = parseFloat(state.discount) || 0;
     const total = Math.max(0, subtotal - discountAmount);
 
-    // Crear objeto de factura
-    const invoiceToSave = {
-      ...state.invoiceData,
-      items: validItems,
+    // 🎨 ABRIR EL PREVIEW (en lugar de guardar directamente)
+    setPreviewData({
+      tabId: tabId,
+      invoiceData: {
+        ...state.invoiceData,
+        paymentMethod: state.paymentMethod
+      },
+      invoiceItems: validItems,
       subtotal,
       discount: discountAmount,
-      tax: 0,
-      total,
-      paymentMethod: state.paymentMethod
-    };
+      tax: 0, // Sin IVA según tu configuración
+      total
+    });
+  };
 
-    // Llamar al callback de guardar
+  /**
+   * 💾 Maneja el guardado desde el preview
+   * Se ejecuta cuando el usuario hace click en "Imprimir y Guardar"
+   */
+  const handleSaveFromPreview = (invoiceToSave) => {
+    // Guardar la factura
     onSaveInvoice(invoiceToSave);
-
+    
     // Cerrar la pestaña después de guardar
-    closeTab(tabId);
+    if (previewData && previewData.tabId) {
+      closeTab(previewData.tabId);
+    }
+    
+    // Cerrar el preview
+    setPreviewData(null);
+  };
+
+  /**
+   * ❌ Cierra el preview sin guardar
+   */
+  const handleClosePreview = () => {
+    setPreviewData(null);
   };
 
   /**
@@ -286,7 +306,6 @@ const MultiInvoiceManager = ({
               </span>
               
               <div className="flex items-center space-x-1">
-                {/* Botón minimizar */}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -298,7 +317,6 @@ const MultiInvoiceManager = ({
                   {tab.isMinimized ? <Maximize2 size={14} /> : <Minus size={14} />}
                 </button>
                 
-                {/* Botón cerrar */}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -356,6 +374,20 @@ const MultiInvoiceManager = ({
             <p className="text-sm">Haz clic en una pestaña para maximizarla</p>
           </div>
         </div>
+      )}
+
+      {/* 🎨 PREVIEW ESPECTACULAR - Se muestra cuando previewData existe */}
+      {previewData && (
+        <InvoicePreview
+          invoiceData={previewData.invoiceData}
+          invoiceItems={previewData.invoiceItems}
+          subtotal={previewData.subtotal}
+          tax={previewData.tax}
+          discount={previewData.discount}
+          total={previewData.total}
+          onClose={handleClosePreview}
+          onSaveInvoice={handleSaveFromPreview}
+        />
       )}
     </div>
   );

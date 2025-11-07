@@ -1,0 +1,224 @@
+         
++---pages
+�   +---Suppliers
+�       �   SuppliersPage.jsx
+�       �   
+�       +---components
+�               FiltersBar.jsx
+�               InvoiceModal.jsx
+�               InvoiceTable.jsx
+�               SupplierModal.jsx
+�               SupplierStats.jsx
+�               SupplierTable.jsx
+�               
++---public
+�       index.html
+�       LogoSoftWork.png
+�       vite.svg
+�       _redirects
+�       
++---src
+    �   App.css
+    �   App.jsx
+    �   index.css
+    �   main.jsx
+    �   
+    +---assets
+    �   �   react.svg
+    �   �   
+    �   +---images
+    �           LogoSoftWork.png
+    �           
+    +---components
+    �   +---common
+    �   �       Button.jsx
+    �   �       Loading.jsx
+    �   �       Modal.jsx
+    �   �       
+    �   +---dashboard
+    �   �       ChartCard.jsx
+    �   �       StatCard.jsx
+    �   �       
+    �   +---layout
+    �   �   +---Admin
+    �   �   �       AdminHeader.jsx
+    �   �   �       AdminMainLayout.jsx
+    �   �   �       AdminSidebar.jsx
+    �   �   �       
+    �   �   +---Worker
+    �   �           WorkerHeader.jsx
+    �   �           WorkerMainLayout copy.jsx
+    �   �           WorkerMainLayout.jsx
+    �   �           WorkerSidebar.jsx
+    �   �           
+    �   +---tables
+    �   �       GenericTable.jsx
+    �   �       
+    �   +---workerDashboard
+    �           CashRegisterSummary.jsx
+    �           WorkerDashboard.jsx
+    �           WorkerDashboardCard.jsx
+    �           
+    +---context
+    �       AuthContext.jsx
+    �       
+    +---hooks
+    �       useAuth.js
+    �       usePermissions.js
+    �       
+    +---pages
+    �   +---Admin
+    �   �   +---Dashboard
+    �   �   �       AdminDashboardPage.jsx
+    �   �   �       
+    �   �   +---Suppliers
+    �   �   �   �   SuppliersPage.jsx
+    �   �   �   �   
+    �   �   �   +---components
+    �   �   �           EmptyState.jsx
+    �   �   �           FiltersBar.jsx
+    �   �   �           InvoiceModal.jsx
+    �   �   �           InvoiceTable.jsx
+    �   �   �           SupplierModal.jsx
+    �   �   �           SupplierStats.jsx
+    �   �   �           SupplierTable.jsx
+    �   �   �           
+    �   �   +---Users
+    �   �       �   UsersPage.jsx
+    �   �       �   
+    �   �       +---components
+    �   �               EmptyState.jsx
+    �   �               UserFilters.jsx
+    �   �               UserHeader.jsx
+    �   �               UserModal.jsx
+    �   �               UserStats.jsx
+    �   �               UserTable.jsx
+    �   �               
+    �   +---Auth
+    �   �   �   LoginPage.jsx
+    �   �   �   
+    �   �   +---components
+    �   �           LoginBranding.jsx
+    �   �           LoginFooter.jsx
+    �   �           LoginForm.jsx
+    �   �           LoginHeader.jsx
+    �   �           QuickLogin.jsx
+    �   �           
+    �   +---Shared
+    �   �   �   NotFoundPage.jsx
+    �   �   �   UnauthorizedPage.jsx
+    �   �   �   
+    �   �   +---Credits
+    �   �   �   �   CreditsPage.jsx
+    �   �   �   �   
+    �   �   �   +---components
+    �   �   �           CreditModal.jsx
+    �   �   �           CreditsTable.jsx
+    �   �   �           DeleteModal.jsx
+    �   �   �           Filters.jsx
+    �   �   �           Header.jsx
+    �   �   �           SuccessAlert.jsx
+    �   �   �           
+    �   �   +---Expenses
+    �   �   �   �   ExpensesPage.jsx
+    �   �   �   �   
+    �   �   �   +---components
+    �   �   �           ExpenseEmptyState.jsx
+    �   �   �           ExpenseForm.jsx
+    �   �   �           ExpenseStats.jsx
+    �   �   �           ExpenseTable.jsx
+    �   �   �           
+    �   �   +---History
+    �   �   �       AllMovementsHistory.jsx
+    �   �   �       CreditsHistory.jsx
+    �   �   �       ExpensesHistory.jsx
+    �   �   �       HistoryDashboard.jsx
+    �   �   �       HistoryPage.jsx
+    �   �   �       InvoicesHistory.jsx
+    �   �   �       SalesHistory.jsx
+    �   �   �       
+    �   �   +---Inventory
+    �   �   �   �   InventoryPage.jsx
+    �   �   �   �   
+    �   �   �   +---components
+    �   �   �           CategoryModal.jsx
+    �   �   �           DeleteModal.jsx
+    �   �   �           Filters.jsx
+    �   �   �           Header.jsx
+    �   �   �           ProductModal.jsx
+    �   �   �           ProductsTable.jsx
+    �   �   �           
+    �   �   +---Invoices
+    �   �   �   �   InvoicesPage.jsx
+    �   �   �   �   
+    �   �   �   +---components
+    �   �   �           InvoiceDetail.jsx
+    �   �   �           InvoiceEmptyState.jsx
+    �   �   �           InvoiceForm.jsx
+    �   �   �           InvoiceList.jsx
+    �   �   �           InvoicePreview.jsx
+    �   �   �           Invoicespage functions.jsx
+    �   �   �           InvoiceStats.jsx
+    �   �   �           MultiInvoiceManager.jsx
+    �   �   �           
+    �   �   +---Sales
+    �   �       �   SalesPage.jsx
+    �   �       �   
+    �   �       +---components
+    �   �               RecentSales.jsx
+    �   �               SalesCharts.jsx
+    �   �               SalesHeader.jsx
+    �   �               SalesSearch.jsx
+    �   �               SalesStats.jsx
+    �   �               
+    �   +---Worker
+    �       +---CashRegister
+    �       �   �   CashRegisterClosingPage.jsx
+    �       �   �   
+    �       �   +---components
+    �       �           ActionButtons.jsx
+    �       �           CashCountForm.jsx
+    �       �           CashRegisterHeader.jsx
+    �       �           CashSummary.jsx
+    �       �           ElectronicPaymentsForm.jsx
+    �       �           SystemComparison.jsx
+    �       �           
+    �       +---Clients
+    �       �   �   ClientsPage.jsx
+    �       �   �   
+    �       �   +---components
+    �       �   �   �   ClientFilters.jsx
+    �       �   �   �   ClientStats.jsx
+    �       �   �   �   ClientTable.jsx
+    �       �   �   �   
+    �       �   �   +---modals
+    �       �   �           AddClientModal.jsx
+    �       �   �           DeleteClientModal.jsx
+    �       �   �           EditClientModal.jsx
+    �       �   �           
+    �       �   +---hooks
+    �       �           useClients.js
+    �       �           
+    �       +---Dashboard
+    �       �       WorkerDashboardPage.jsx
+    �       �       
+    �       +---Returns
+    �               ReturnsPage.jsx
+    �               
+    +---routes
+    �       AdminRoutes.jsx
+    �       AppRoutes.jsx
+    �       PrivateRoute.jsx
+    �       WorkerRoutes.jsx
+    �       
+    +---services
+    �       api.js
+    �       authService copy.js
+    �       authService.js
+    �       
+    +---styles
+    �       index.css
+    �       
+    +---utils
+            constants.js
+            permissions.js
